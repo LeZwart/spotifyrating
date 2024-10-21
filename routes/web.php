@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');
+Route::get('/artists/{id}', [ArtistController::class, 'show'])->name('artists.show');
 require __DIR__.'/auth.php';
