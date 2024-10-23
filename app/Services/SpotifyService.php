@@ -164,6 +164,7 @@ class SpotifyService
 /**
  * Get artists from Spotify and cache in the database
  * Searches for artists in the database first, if not found, searches in Spotify
+ * Sorts the results by popularity
  */
 public function searchArtists($query) {
     $artists = $this->searchArtistsCached($query);
@@ -172,7 +173,8 @@ public function searchArtists($query) {
         $artists = collect($this->searchArtistsSpotify($query));
     }
 
-    $artists = $artists->take(20);
+    // TODO: Currently sorts by popularity must have sorting options later
+    $artists = $artists->take(20)->sortByDesc('popularity');
     foreach ($artists as $artist) {
         $this->_updateArtist($artist);
     }
