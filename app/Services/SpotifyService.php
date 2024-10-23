@@ -167,6 +167,10 @@ class SpotifyService
  * Sorts the results by popularity
  */
 public function searchArtists($query) {
+    if (strlen($query) < 3) {
+        return [];
+    }
+
     $artists = $this->searchArtistsCached($query);
 
     if (count($artists) <= 20) {
