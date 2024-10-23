@@ -13,7 +13,7 @@
 
         <!-- Artist Genres -->
         <p class="text-lg text-gray-700 mb-2">
-            <strong>Genres:</strong> {{ implode(', ', $artist->genres) }}
+            {{-- <strong>Genres:</strong> {{ implode(', ', $artist->genres) }} --}}
         </p>
 
         <!-- Artist Popularity -->
@@ -23,7 +23,7 @@
 
         <!-- Artist Followers -->
         <p class="text-lg text-gray-700 mb-6">
-            <strong>Followers:</strong> {{ number_format($artist->followers->total) }}
+            <strong>Followers:</strong> {{ number_format($artist->followers) }}
         </p>
 
         <!-- Optional Flowbite button for extra interaction -->

@@ -34,7 +34,7 @@
                         @endif
                         <div>
                             <h2 class="text-xl font-bold text-gray-800">{{ $artist->name }}</h2>
-                            <p class="text-gray-500">{{ number_format($artist->followers->total) }} followers</p>
+                            <p class="text-gray-500">{{ number_format($artist->followers) }} followers</p>
                         </div>
                     </div>
                 </a>
