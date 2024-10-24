@@ -10,6 +10,7 @@ class Artist extends Model
     use HasFactory;
 
     protected $fillable = [
+        'spotify_id',
         'name',
         'popularity',
         'href',

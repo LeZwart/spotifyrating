@@ -17,18 +17,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach ($artists as $artist)
-            {{-- @dd($artist) --}}
 
             {{-- TODO: change href to show route later --}}
-                <a href="{{ route('artists.show', $artist->id) }}"
+                <a href="{{ route('artists.show', $artist->spotify_id) }}"
                     class="bg-white overflow-hidden shadow-lg hover:shadow-xl sm:rounded-lg p-6 mb-4 transform transition duration-300 hover:scale-105">
                     <div class="flex items-center">
                         @if (isset($artist->images[2]))
                             <img src="{{ $artist->images[2]->url }}" alt="Artist Image"
                                 class="w-16 h-16 rounded-full mr-4 object-cover">
                         @else
-                            <div
-                                class="w-16 h-16 rounded-full bg-gray-200 mr-4 flex items-center justify-center text-gray-500 text-sm">
+                            <div class="w-16 h-16 rounded-full bg-gray-200 mr-4 flex items-center justify-center text-gray-500 text-sm">
                                 No Image
                             </div>
                         @endif

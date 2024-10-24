@@ -20,14 +20,13 @@ class ArtistController extends Controller
     {
         $request->validated();
         $query = $request->input('q');
-
         $artists = $this->spotifyService->searchArtists($query);
         return view('artists.index', compact('artists'));
     }
 
-    public function show($id)
+    public function show($spotify_id)
     {
-        $artist = $this->spotifyService->getArtist($id);
+        $artist = $this->spotifyService->getArtist($spotify_id);
         return view('artists.show', compact('artist'));
     }
 }

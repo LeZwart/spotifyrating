@@ -48,34 +48,33 @@ class SpotifyService
 
         $response = json_decode($response->getBody()->getContents())->artists->items;
 
-
         // check if artists are cached in database
         // if not, add them to the database
         $artists = [];
         foreach ($response as $artist) {
-            if (!$this->getArtistCached($artist->uri)) {
+            if (!$this->getArtistCached($artist->id)) {
                 $createdArtist = $this->_createArtist($artist);
                 array_push($artists, $createdArtist);
             }
         }
-        // dd($artists);
         return $artists;
     }
 
     /**
      * Get artist details from Spotify
      */
-    public function getArtistSpotify($artistHref) {
+    public function getArtistSpotify($spotify_id) {
 
-        $response = $this->client->request('GET', $artistHref, [
+        $response = $this->client->request('GET', "https://api.spotify.com/v1/artists/" . $spotify_id, [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->_getAccessToken(),
             ],
         ]);
 
         $response = json_decode($response->getBody()->getContents());
-        $artist = $this->getArtistCached($response->href);
-        if (!$this->getArtistCached($response->href)) {
+
+        $artist = $this->getArtistCached($response->id);
+        if (!$this->getArtistCached($response->id)) {
             $artist = $this->_createArtist($response);
         }
 
@@ -95,8 +94,8 @@ class SpotifyService
      * Get artist details cached in database
      * (does not get sanitized in method, should be done before calling)
      */
-    public function getArtistCached($artistHref) {
-        $artist = Artist::find($artistHref);
+    public function getArtistCached($spotify_id) {
+        $artist = Artist::all()->where('spotify_id', $spotify_id)->first();
         return $artist;
     }
 
@@ -104,16 +103,17 @@ class SpotifyService
      * Update artist in database
      */
     private function _updateArtist($artist) {
+        // dd($artist->updated_at->diffInHours(now()), $artist, $artist->updated_at->diffInHours(now()) > 24);
         if ($artist->updated_at->diffInHours(now()) > 24) {
-            $artistSpotify = $this->getArtistSpotify($artist->id);
+            $artistSpotify = $this->getArtistSpotify($artist->href);
 
             $artist->update([
                 'name' => $artistSpotify->name,
                 'popularity' => $artistSpotify->popularity,
                 'href' => $artistSpotify->href,
                 'uri' => $artistSpotify->uri,
-                'followers' => $artistSpotify->followers->total,
-                'external_url' => $artistSpotify->external_urls->spotify,
+                'followers' => $artistSpotify->followers,
+                'external_url' => $artistSpotify->external_url,
             ]);
 
             $artist->genres()->delete();
@@ -137,7 +137,7 @@ class SpotifyService
      */
     private function _createArtist($artistSpotify) {
         $artist = Artist::create([
-            'id' => $artistSpotify->id,
+            'spotify_id' => $artistSpotify->id,
             'name' => $artistSpotify->name,
             'popularity' => $artistSpotify->popularity,
             'href' => $artistSpotify->href,
@@ -173,7 +173,7 @@ public function searchArtists($query) {
 
     $artists = $this->searchArtistsCached($query);
 
-    if (count($artists) <= 20) {
+    if (count($artists) < 20) {
         $artists = collect($this->searchArtistsSpotify($query));
     }
 
@@ -187,10 +187,11 @@ public function searchArtists($query) {
 }
 
 
-    public function getArtist($artistHref) {
-        $artist = $this->getArtistCached($artistHref);
+    public function getArtist($spotify_id) {
+        $artist = $this->getArtistCached($spotify_id);
+
         if (!$artist) {
-            $artist = $this->getArtistSpotify($artistHref);
+            $artist = $this->getArtistSpotify($spotify_id);
         } else {
             $this->_updateArtist($artist);
         }
