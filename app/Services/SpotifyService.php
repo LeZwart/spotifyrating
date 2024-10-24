@@ -73,12 +73,7 @@ class SpotifyService
 
         $response = json_decode($response->getBody()->getContents());
 
-        $artist = $this->getArtistCached($response->id);
-        if (!$this->getArtistCached($response->id)) {
-            $artist = $this->_createArtist($response);
-        }
-
-        return $artist;
+        return $response;
     }
 
     /**
@@ -103,17 +98,16 @@ class SpotifyService
      * Update artist in database
      */
     private function _updateArtist($artist) {
-        // dd($artist->updated_at->diffInHours(now()), $artist, $artist->updated_at->diffInHours(now()) > 24);
         if ($artist->updated_at->diffInHours(now()) > 24) {
-            $artistSpotify = $this->getArtistSpotify($artist->href);
+            $artistSpotify = $this->getArtistSpotify($artist->spotify_id);
 
             $artist->update([
                 'name' => $artistSpotify->name,
                 'popularity' => $artistSpotify->popularity,
                 'href' => $artistSpotify->href,
                 'uri' => $artistSpotify->uri,
-                'followers' => $artistSpotify->followers,
-                'external_url' => $artistSpotify->external_url,
+                'followers' => $artistSpotify->followers->total,
+                'external_url' => $artistSpotify->external_urls->spotify,
             ]);
 
             $artist->genres()->delete();
@@ -191,7 +185,8 @@ public function searchArtists($query) {
         $artist = $this->getArtistCached($spotify_id);
 
         if (!$artist) {
-            $artist = $this->getArtistSpotify($spotify_id);
+            $response = $this->getArtistSpotify($spotify_id);
+            $this->_createArtist($response);
         } else {
             $this->_updateArtist($artist);
         }
