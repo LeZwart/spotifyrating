@@ -56,7 +56,13 @@ class SpotifyService
                 $createdArtist = $this->_createArtist($artist);
                 array_push($artists, $createdArtist);
             }
+            else {
+                $cachedArtist = $this->getArtistCached($artist->id);
+                $this->_updateArtist($cachedArtist);
+                array_push($artists, $cachedArtist);
+            }
         }
+        // dd($artists);
         return $artists;
     }
 
@@ -167,12 +173,16 @@ public function searchArtists($query) {
 
     $artists = $this->searchArtistsCached($query);
 
+    // dd($artists);
     if (count($artists) < 20) {
         $artists = collect($this->searchArtistsSpotify($query));
     }
 
+
     // TODO: Currently sorts by popularity must have sorting options later
+
     $artists = $artists->take(20)->sortByDesc('popularity');
+
     foreach ($artists as $artist) {
         $this->_updateArtist($artist);
     }
