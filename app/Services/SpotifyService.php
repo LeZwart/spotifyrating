@@ -161,7 +161,7 @@ class SpotifyService
  * Sorts the results by popularity
  */
 public function searchArtists($query) {
-    if (strlen($query) < 3) {
+    if (strlen($query) < 1) {
         return [];
     }
 
