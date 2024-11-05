@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 });
 
 Route::get('/', [ArtistController::class, 'showHomepage'])->name('homepage');
