@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -17,6 +19,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::middleware(AdminMiddleware::class)->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+});
+
 Route::get('/', [ArtistController::class, 'showHomepage'])->name('homepage');
 
 Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index');

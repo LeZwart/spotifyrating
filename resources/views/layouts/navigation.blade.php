@@ -25,10 +25,10 @@
 
                     @auth
                         @if (Auth::check() && Auth::user()->role === 'admin')
-                            {{-- <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.index')"
+                            <x-nav-link :href="route('admin.index')" :active="request()->routeIs('admin.index')"
                                 class="text-white hover:text-[#CDF564] text-xl no-underline">
                                 {{ __('Admin') }}
-                            </x-nav-link> --}}
+                            </x-nav-link>
                         @endif
                     @else
                         <!-- Move Login and Register to the right -->
