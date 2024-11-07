@@ -8,15 +8,18 @@ use GuzzleHttp\Client;
 class SpotifyService
 {
     private $client;
+    public const QUERY_AMOUNT = 20;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->client = new Client();
     }
 
     /**
      * Get Spotify access token
      */
-    private function _getAccessToken() {
+    private function _getAccessToken()
+    {
         $response = $this->client->post('https://accounts.spotify.com/api/token', [
             'form_params' => [
                 'grant_type' => 'client_credentials',
@@ -31,7 +34,8 @@ class SpotifyService
     /**
      * Search for artists from Spotify
      */
-    public function searchArtistsSpotify($query) {
+    public function searchArtistsSpotify($query)
+    {
         $spotifyApiUrl = 'https://api.spotify.com/v1/search';
         $params = [
             'q' => 'artist:' . $query,
@@ -63,7 +67,8 @@ class SpotifyService
     /**
      * Get artist details from Spotify
      */
-    public function getArtistSpotify($spotify_id) {
+    public function getArtistSpotify($spotify_id)
+    {
 
         $response = $this->client->request('GET', "https://api.spotify.com/v1/artists/" . $spotify_id, [
             'headers' => [
@@ -85,7 +90,8 @@ class SpotifyService
      * Search for artists cached in database using LIKE
      * (does not get sanitized in method, should be done before calling)
      */
-    public function searchArtistsCached($query) {
+    public function searchArtistsCached($query)
+    {
         $artists = Artist::where('name', 'LIKE', '%' . $query . '%')->get();
         return $artists;
     }
@@ -94,7 +100,8 @@ class SpotifyService
      * Get artist details cached in database
      * (does not get sanitized in method, should be done before calling)
      */
-    public function getArtistCached($spotify_id) {
+    public function getArtistCached($spotify_id)
+    {
         $artist = Artist::all()->where('spotify_id', $spotify_id)->first();
         return $artist;
     }
@@ -102,7 +109,8 @@ class SpotifyService
     /**
      * Update artist in database
      */
-    private function _updateArtist($artist) {
+    private function _updateArtist($artist)
+    {
         // dd($artist->updated_at->diffInHours(now()), $artist, $artist->updated_at->diffInHours(now()) > 24);
         if ($artist->updated_at->diffInHours(now()) > 24) {
             $artistSpotify = $this->getArtistSpotify($artist->href);
@@ -135,7 +143,8 @@ class SpotifyService
     /**
      * Create artist in database
      */
-    private function _createArtist($artistSpotify) {
+    private function _createArtist($artistSpotify)
+    {
         $artist = Artist::create([
             'spotify_id' => $artistSpotify->id,
             'name' => $artistSpotify->name,
@@ -161,33 +170,35 @@ class SpotifyService
         return $artist;
     }
 
-/**
- * Get artists from Spotify and cache in the database
- * Searches for artists in the database first, if not found, searches in Spotify
- * Sorts the results by popularity
- */
-public function searchArtists($query) {
-    if (strlen($query) < 3) {
-        return [];
+    /**
+     * Get artists from Spotify and cache in the database
+     * Searches for artists in the database first, if not found, searches in Spotify
+     * Sorts the results by popularity
+     */
+    public function searchArtists($query)
+    {
+        if (strlen($query) < 3) {
+            return [];
+        }
+
+        $artists = $this->searchArtistsCached($query);
+
+        if (count($artists) < self::QUERY_AMOUNT) {
+            $artists = collect($this->searchArtistsSpotify($query));
+        }
+
+        // TODO: Currently sorts by popularity must have sorting options later
+        $artists = $artists->take(self::QUERY_AMOUNT)->sortByDesc('popularity');
+        foreach ($artists as $artist) {
+            $this->_updateArtist($artist);
+        }
+
+        return $artists;
     }
 
-    $artists = $this->searchArtistsCached($query);
 
-    if (count($artists) < 20) {
-        $artists = collect($this->searchArtistsSpotify($query));
-    }
-
-    // TODO: Currently sorts by popularity must have sorting options later
-    $artists = $artists->take(20)->sortByDesc('popularity');
-    foreach ($artists as $artist) {
-        $this->_updateArtist($artist);
-    }
-
-    return $artists;
-}
-
-
-    public function getArtist($spotify_id) {
+    public function getArtist($spotify_id)
+    {
         $artist = $this->getArtistCached($spotify_id);
 
         if (!$artist) {
@@ -199,4 +210,12 @@ public function searchArtists($query) {
         return $artist;
     }
 
+    public function getRecentlyQueriedArtists()
+    {
+        $artists = Artist::orderBy('updated_at', 'desc')->take(self::QUERY_AMOUNT)->get();
+        foreach ($artists as $artist) {
+            $this->_updateArtist($artist);
+        }
+        return $artists;
+    }
 }
