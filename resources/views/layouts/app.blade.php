@@ -18,16 +18,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Nerko+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Additional styling for dark theme -->
+    <style>
+        /* Global dark background color for Spotify-inspired theme */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
 
+        /* Dark background for the main container */
+        .min-h-screen {
+            background-color: #121212;
+        }
+
+        /* Dark styling for header and navigation */
+        header {
+            background-color: #181818;
+            color: #ffffff;
+            box-shadow: none;
+        }
+
+        /* Adjust links and buttons to match dark theme */
+        a,
+        button {
+            color: #1DB954;
+            /* Spotify green */
+        }
+
+        /* Placeholder text for input fields */
+        input::placeholder {
+            color: #b3b3b3;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen">
         @include('layouts.navigation')
 
         <!-- Page Heading -->
         @isset($header)
-            <header class="bg-white shadow">
+            <header class="shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
