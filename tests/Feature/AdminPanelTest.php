@@ -126,3 +126,25 @@ test('An admin can update a user', function () {
 
     $response->assertRedirect('/admin/users');
 });
+
+test('A user cannot access the admin artists page', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/admin/artists');
+
+    $response->assertForbidden();
+});
+
+test('An admin can access the admin artists page', function () {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+    ]);
+
+    $response = $this
+        ->actingAs($admin)
+        ->get('/admin/artists');
+
+    $response->assertOk();
+});
