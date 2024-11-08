@@ -21,9 +21,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(AdminMiddleware::class)->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
     Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+    Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::patch('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+
+    Route::get('/admin/artists', [AdminController::class, 'artists'])->name('admin.artists');
 });
 
 Route::get('/', [ArtistController::class, 'showHomepage'])->name('homepage');
