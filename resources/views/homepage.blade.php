@@ -8,9 +8,10 @@
                     him!</span>
                 <h1 class="text-white font-extrabold text-5xl mb-8">Who is your favorite artist?</h1>
 
-                <form action="{{ route('artists.index') }}" method="GET" class="w-[600px] mx-auto">
+                <form action="{{ route('artists.index') }}" method="GET" class="w-[600px] mx-auto bg-gray-800">
                     <!-- Set form width explicitly -->
-                    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                    <label for="default-search"
+                        class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -19,9 +20,11 @@
                                     stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input type="search" id="q" name="q" class="block w-[450px] p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Artists..." required />
+                        <input type="search" id="q" name="q"
+                            class="block w-[450px] p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Search Artists..." required />
                         <button type="submit"
-                            class="absolute right-8 bottom-2.5 bg-[#CBF55E] hover:bg-[#A8D13E] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-[#400073] px-4 py-2">Search</button>
+                            class="absolute right-8 bottom-2.5 bg-gray-800 hover:bg-[#A8D13E] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
                     </div>
                 </form>
             </div>
@@ -69,8 +72,9 @@
                     eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
             </div>
             <button
-                class="text-sky-950 uppercase py-3 text-base px-10 border border-sky-950 hover:bg-sky-950 hover:bg-opacity-10">Get
-                started</button>
+                class="text-sky-950 uppercase py-3 text-base px-10 border border-sky-950 hover:bg-sky-950 hover:bg-opacity-10"><a
+                    href="{{ route('login') }}">Get
+                    started</button>
         </div>
     </div>
 </x-app-layout>
