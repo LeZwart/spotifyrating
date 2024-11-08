@@ -32,7 +32,7 @@
                                     <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-24">Delete</button>
+                                        <button type="submit" onclick="return confirm('This action will delete {{ $user->name }} and cannot be undone. Are you sure?')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-24">Delete</button>
                                     </form>
                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-24 inline-block text-center">Edit</a>
                                 </td>
