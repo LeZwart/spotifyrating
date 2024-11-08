@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SpotifySearchRequest;
 use App\Services\SpotifyService;
-use Illuminate\Container\Attributes\Log;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class ArtistController extends Controller
