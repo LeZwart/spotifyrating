@@ -21,6 +21,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect()->route('homepage');
+        abort(403, "Access denied :(");
     }
 }
