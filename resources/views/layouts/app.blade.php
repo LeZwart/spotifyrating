@@ -23,31 +23,6 @@
         /* Global dark background color for Spotify-inspired theme */
         body {
             background-color: #121212;
-            color: #ffffff;
-        }
-
-        /* Dark background for the main container */
-        .min-h-screen {
-            background-color: #121212;
-        }
-
-        /* Dark styling for header and navigation */
-        header {
-            background-color: #181818;
-            color: #ffffff;
-            box-shadow: none;
-        }
-
-        /* Adjust links and buttons to match dark theme */
-        a,
-        button {
-            color: #1DB954;
-            /* Spotify green */
-        }
-
-        /* Placeholder text for input fields */
-        input::placeholder {
-            color: #b3b3b3;
         }
     </style>
 </head>
