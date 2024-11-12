@@ -28,11 +28,6 @@ class Artist extends Model
         return $this->hasMany(Genre::class);
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
     public function ratings()
     {
         return $this->hasMany(Rating::class);

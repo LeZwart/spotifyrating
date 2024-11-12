@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->integer('rating');
+            $table->string('comment');
             $table->foreignId('artist_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
