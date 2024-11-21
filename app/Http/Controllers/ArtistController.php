@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SpotifySearchRequest;
 use App\Services\SpotifyService;
-use Illuminate\Container\Attributes\Log;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class ArtistController extends Controller
@@ -22,14 +20,17 @@ class ArtistController extends Controller
     {
         $request->validated();
         $query = $request->input('q');
-
         $artists = $this->spotifyService->searchArtists($query);
+        if (empty($query)) {
+            $artists = $this->spotifyService->getRecentlyQueriedArtists();
+        }
+
         return view('artists.index', compact('artists'));
     }
 
-    public function show($id)
+    public function show($spotify_id)
     {
-        $artist = $this->spotifyService->getArtist($id);
+        $artist = $this->spotifyService->getArtist($spotify_id);
         return view('artists.show', compact('artist'));
     }
 
