@@ -2,12 +2,9 @@
 
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ProfileController;
-<<<<<<< HEAD
 use App\Http\Controllers\RatingController;
-=======
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\AdminMiddleware;
->>>>>>> main
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
