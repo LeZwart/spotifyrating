@@ -23,12 +23,12 @@
                     <tbody class="bg-gray-800 divide-y divide-gray-400">
                         @foreach ($users as $user)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-50">{{ $user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-50">{{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-50">
                                     {{ $user->role == 'admin' ? 'Admin' : 'User' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-50">
                                     <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')

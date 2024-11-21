@@ -23,13 +23,13 @@
                     <tbody class="bg-gray-800 divide-y divide-gray-400">
                         @foreach ($artists as $artist)
                             <tr>
-                                <td class="px-6 py-2">{{ $artist->name }}</td>
-                                <td class="px-6 py-2">{{ number_format($artist->followers) }}</td>
-                                <td class="px-6 py-2">
+                                <td class="px-6 py-2 text-gray-50">{{ $artist->name }}</td>
+                                <td class="px-6 py-2 text-gray-50">{{ number_format($artist->followers) }}</td>
+                                <td class="px-6 py-2 text-gray-50">
                                     <span class="inline-block w-4 h-4 rounded-full" style="background-color: hsl({{ $artist->popularity * 1.5 }}, 100%, 50%);"></span>
                                 </td>
-                                <td class="px-6 py-2">{{ $artist->created_at->format('d-m-Y') }}</td>
-                                <td class="px-6 py-2">{{ $artist->updated_at->diffForHumans() }}</td>
+                                <td class="px-6 py-2 text-gray-50">{{ $artist->created_at->format('d-m-Y') }}</td>
+                                <td class="px-6 py-2 text-gray-50">{{ $artist->updated_at->diffForHumans() }}</td>
                             </tr>
                         @endforeach
                     </tbody>
