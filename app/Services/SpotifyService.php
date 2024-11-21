@@ -19,6 +19,7 @@ class SpotifyService
      */
     private function _getAccessToken()
     {
+        // Request access token from Spotify using client id and secret
         $response = $this->client->post('https://accounts.spotify.com/api/token', [
             'form_params' => [
                 'grant_type' => 'client_credentials',
@@ -27,6 +28,7 @@ class SpotifyService
             ]
         ]);
 
+        // Return access token
         return json_decode($response->getBody()->getContents())->access_token;
     }
 
@@ -41,14 +43,17 @@ class SpotifyService
             'type' => 'artist',
         ];
 
+        // turn the params into a query string for the request
         $searchQuery = http_build_query($params);
 
+        // make the request to the Spotify API
         $response = $this->client->request('GET', "$spotifyApiUrl?$searchQuery", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->_getAccessToken(),
             ],
         ]);
 
+        // get the response from the request
         $response = json_decode($response->getBody()->getContents())->artists->items;
 
         // check if artists are cached in database
@@ -64,7 +69,8 @@ class SpotifyService
                 array_push($artists, $cachedArtist);
             }
         }
-        // dd($artists);
+
+        // return the artists
         return $artists;
     }
 
@@ -73,15 +79,17 @@ class SpotifyService
      */
     public function getArtistSpotify($spotify_id)
     {
-
+        // make the request to the Spotify API
         $response = $this->client->request('GET', "https://api.spotify.com/v1/artists/" . $spotify_id, [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->_getAccessToken(),
             ],
         ]);
 
+        // get the response from the request
         $response = json_decode($response->getBody()->getContents());
 
+        // return the response
         return $response;
     }
 
@@ -91,6 +99,7 @@ class SpotifyService
      */
     public function searchArtistsCached($query)
     {
+        // search for artists in the database
         $artists = Artist::where('name', 'LIKE', '%' . $query . '%')->get();
         return $artists;
     }
@@ -101,6 +110,7 @@ class SpotifyService
      */
     public function getArtistCached($spotify_id)
     {
+        // get artist from the database
         $artist = Artist::all()->where('spotify_id', $spotify_id)->first();
         return $artist;
     }
@@ -110,9 +120,13 @@ class SpotifyService
      */
     private function _updateArtist($artist)
     {
+        // if artist was updated more than 24 hours ago, update it
         if ($artist->updated_at->diffInHours(now()) > 24) {
+
+            // get updated artist details from Spotify
             $artistSpotify = $this->getArtistSpotify($artist->spotify_id);
 
+            // update artist details
             $artist->update([
                 'name' => $artistSpotify->name,
                 'popularity' => $artistSpotify->popularity,
@@ -122,6 +136,7 @@ class SpotifyService
                 'external_url' => $artistSpotify->external_urls->spotify,
             ]);
 
+            // delete all genres and images and add new ones
             $artist->genres()->delete();
             foreach ($artistSpotify->genres as $genre) {
                 $artist->genres()->create(['genre' => $genre]);
@@ -153,10 +168,12 @@ class SpotifyService
             'external_url' => $artistSpotify->external_urls->spotify,
         ]);
 
+        // for each genre, create a new genre in the database
         foreach ($artistSpotify->genres as $genre) {
             $artist->genres()->create(['genre' => $genre]);
         }
 
+        // for each image, create a new image in the database
         foreach ($artistSpotify->images as $image) {
             $artist->images()->create([
                 'url' => $image->url,
@@ -175,45 +192,58 @@ class SpotifyService
      */
     public function searchArtists($query)
     {
+        // if query is empty, return empty array
         if (strlen($query) < 1) {
             return [];
         }
 
+        // search for artists in the database
         $artists = $this->searchArtistsCached($query);
 
-        // dd($artists);
+        // if less than 20 artists are found, search in Spotify
         if (count($artists) < 20) {
             $artists = collect($this->searchArtistsSpotify($query));
         }
 
 
         // TODO: Currently sorts by popularity must have sorting options later
-
+        // sort the artists by popularity and take the top 20
         $artists = $artists->take(20)->sortByDesc('popularity');
 
+        // check each artist for any needed updates
         foreach ($artists as $artist) {
             $this->_updateArtist($artist);
         }
 
+        // return the artists
         return $artists;
     }
 
 
     public function getArtist($spotify_id)
     {
+        // get the artist from the database
         $artist = $this->getArtistCached($spotify_id);
 
+        // if the artist is not in the database, get it from Spotify
         if (!$artist) {
+
+            // get the artist from Spotify and cache it in the database
             $response = $this->getArtistSpotify($spotify_id);
             $this->_createArtist($response);
         } else {
+
+            // Update the artist if it was last updated more than 24 hours ago
             $this->_updateArtist($artist);
         }
 
+        // get the artist from the database
         return $artist;
     }
 
     public function getRecentlyQueriedArtists() {
+
+        // get the 20 most recently updated artists
         $artists = Artist::orderBy('updated_at', 'desc')->take(20)->get();
         return $artists;
     }
