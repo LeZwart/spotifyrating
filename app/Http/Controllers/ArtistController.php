@@ -22,7 +22,7 @@ class ArtistController extends Controller
         $query = $request->input('q');
         $artists = $this->spotifyService->searchArtists($query);
         if (empty($query)) {
-            $artists = $this->spotifyService->getRecentlyQueriedArtists();
+            $artists = $this->spotifyService->getMostPopularArtists();
         }
 
         return view('artists.index', compact('artists'));
