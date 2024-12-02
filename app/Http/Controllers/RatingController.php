@@ -18,15 +18,23 @@ class RatingController extends Controller
     {
         $request->validated();
         $artist = Artist::find($request->artist_id);
+        if ($request->rating < 1 || $request->rating > 5) {
+            return redirect()->route('artists.show', $artist->id)->with('error', 'Rating must be between 1 and 5');
+        }
 
         // Check if the user has already rated the artist
         $rating = Rating::where('artist_id', $artist->id)
             ->where('user_id', Auth::id())
             ->first();
 
-        // If the user has already rated the artist, redirect back with an error message
+        // Update rating if the user has already rated artist
         if ($rating) {
-            return redirect()->route('artists.show', $artist->id)->with('error', 'You have already rated this artist');
+            $rating->update([
+                'rating' => $request->rating,
+                'comment' => $request->comment
+            ]);
+
+            return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating updated successfully');
         }
 
         Rating::create([
@@ -36,7 +44,7 @@ class RatingController extends Controller
             'comment' => $request->comment
         ]);
 
-        return redirect()->route('artists.show', $artist->id)->with('success', 'Rating added successfully');
+        return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating added successfully');
     }
 
     /**
@@ -56,7 +64,7 @@ class RatingController extends Controller
             'comment' => $request->comment
         ]);
 
-        return redirect()->route('artists.show', $artist->id)->with('success', 'Rating updated successfully');
+        return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating updated successfully');
     }
 
     /**
@@ -64,6 +72,6 @@ class RatingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
     }
 }

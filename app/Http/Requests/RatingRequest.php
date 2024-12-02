@@ -26,6 +26,7 @@ class RatingRequest extends FormRequest
         return [
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|max:255',
+            'artist_id' => 'required|integer|exists:artists,id'
         ];
     }
 }
