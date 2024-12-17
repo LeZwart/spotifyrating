@@ -247,4 +247,10 @@ class SpotifyService
         $artists = Artist::orderBy('updated_at', 'desc')->take(20)->get();
         return $artists;
     }
+
+    public function getMostPopularArtists() {
+        // get the 20 most popular artists
+        $artists = Artist::orderBy('popularity', 'desc')->take(20)->get();
+        return $artists;
+    }
 }

@@ -4,66 +4,67 @@ namespace App\Http\Controllers;
 
 use App\Models\Artist;
 use Illuminate\Http\Request;
+use App\Http\Requests\RatingRequest;
+use App\Models\Rating;
+use Illuminate\Support\Facades\Auth;
 
 class RatingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Artist $artist)
+    public function store(RatingRequest $request)
     {
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:255',
+        $request->validated();
+        $artist = Artist::find($request->artist_id);
+        if ($request->rating < 1 || $request->rating > 5) {
+            return redirect()->route('artists.show', $artist->id)->with('error', 'Rating must be between 1 and 5');
+        }
+
+        // Check if the user has already rated the artist
+        $rating = Rating::where('artist_id', $artist->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        // Update rating if the user has already rated artist
+        if ($rating) {
+            $rating->update([
+                'rating' => $request->rating,
+                'comment' => $request->comment
+            ]);
+
+            return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating updated successfully');
+        }
+
+        Rating::create([
+            'artist_id' => $artist->id,
+            'rating' => $request->rating,
+            'user_id' => Auth::id(),
+            'comment' => $request->comment
         ]);
 
-        $artist->ratings()->create([
-            'rating' => $request->input('rating'),
-            'comment' => $request->input('comment'),
-            'user_id' => auth()->id(),
-        ]);
-
-        return response()->json(['success' => 'Rating and comment submitted successfully!']);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating added successfully');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(RatingRequest $request)
     {
-        //
+        $request->validated();
+
+        $artist = Artist::find($request->artist_id);
+        $rating = Rating::where('artist_id', $artist->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        $rating->update([
+            'rating' => $request->rating,
+            'comment' => $request->comment
+        ]);
+
+        return redirect()->route('artists.show', $artist->spotify_id)->with('success', 'Rating updated successfully');
     }
 
     /**
@@ -71,6 +72,6 @@ class RatingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
     }
 }

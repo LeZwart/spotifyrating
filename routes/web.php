@@ -37,7 +37,7 @@ Route::get('/artists', [ArtistController::class, 'index'])->name('artists.index'
 Route::get('/artists/{id}', [ArtistController::class, 'show'])->name('artists.show');
 
 //rating
-Route::post('/artist/{artist}/rating', [RatingController::class, 'store']);
+Route::post('/artist/{artist}/rating', [RatingController::class, 'store'])->name('artist.rating.store');
 
 
 require __DIR__ . '/auth.php';
