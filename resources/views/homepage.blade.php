@@ -63,18 +63,5 @@
         });
     </script>
 
-    <div class="bg-[#f7d0b6] py-20">
-        <div class="max-w-screen-lg mx-auto flex justify-between items-center">
-            <div class="max-w-xl">
-                <h2 class="font-black text-sky-950 text-3xl mb-4">As the leading experts in this field, we're in over 90
-                    countries</h2>
-                <p class="text-base text-sky-950">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-            <button
-                class="text-sky-950 uppercase py-3 text-base px-10 border border-sky-950 hover:bg-sky-950 hover:bg-opacity-10"><a
-                    href="{{ route('login') }}">Get
-                    started</button>
-        </div>
-    </div>
+
 </x-app-layout>
